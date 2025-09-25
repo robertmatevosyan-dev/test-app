@@ -23,8 +23,9 @@ export function usePostsCSR(limit: number = 10) {
                 if (!res.ok) throw new Error("Failed to fetch posts");
                 const data: Post[] = await res.json();
                 setPosts(data);
-            } catch (e: any) {
-                if (e?.name !== "AbortError") setErr(e?.message ?? "Unknown error");
+            } catch (e: unknown) {
+                if (e instanceof DOMException && e.name === "AbortError") return;
+                setErr(e instanceof Error ? e.message : "Unknown error");
             } finally {
                 setLoading(false);
             }

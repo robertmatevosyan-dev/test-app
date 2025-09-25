@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 
+export const runtime = "nodejs";
+
 export async function POST(req: NextRequest) {
     try {
         const form = await req.formData();
@@ -14,7 +16,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ ok: false, error: "File is required" }, { status: 400 });
         }
 
-        const bytes = Buffer.from(await file.arrayBuffer());
+        const ab = await file.arrayBuffer();
+        const bytes = Buffer.from(ab);
         const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 16);
 
         return NextResponse.json({
@@ -25,7 +28,8 @@ export async function POST(req: NextRequest) {
             size: bytes.byteLength,
             sha256_16: hash,
         });
-    } catch (e: any) {
-        return NextResponse.json({ ok: false, error: e?.message ?? "Upload error" }, { status: 500 });
+    } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : "Upload error";
+        return NextResponse.json({ ok: false, error: message }, { status: 500 });
     }
 }
