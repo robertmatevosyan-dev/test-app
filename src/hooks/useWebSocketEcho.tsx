@@ -21,7 +21,7 @@ export function useWebSocketEcho(
 
         ws.onopen = () => setStatus("open");
         ws.onclose = () => setStatus("closed");
-        ws.onerror = (e) => {
+        ws.onerror = () => {
             setStatus("error");
             setError("WebSocket error");
         };

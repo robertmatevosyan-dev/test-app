@@ -63,8 +63,8 @@ export default function UploadModal({ open, onClose, onSubmit }: UploadModalProp
 
             reset();
             onClose();
-        } catch (e: any) {
-            setError(e?.message ?? "Sending error");
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : "Sending error");
         } finally {
             setSubmitting(false);
         }
